@@ -6,7 +6,7 @@ namespace Customers.Features.CreatingCustomer;
 
 public class CreateCustomerEndpoint : EndpointBaseAsync
 .WithRequest<CreateCustomerCommand>
-.WithActionResult<string>
+.WithActionResult<long>
 {
     private readonly IMediator _mediator;
 
@@ -16,7 +16,7 @@ public class CreateCustomerEndpoint : EndpointBaseAsync
     }
 
     [HttpPost("Create")]
-    public override async Task<ActionResult<string>> HandleAsync(CreateCustomerCommand request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<long>> HandleAsync(CreateCustomerCommand request, CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(request);
     }

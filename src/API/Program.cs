@@ -1,7 +1,8 @@
 using BuildingBlocks.Web;
+using BuildingBlocks.MediatR;
+using Customers;
 using Figgle;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 var appOptions = builder.Configuration.GetSection("AppOptions").Get<AppOptions>();
@@ -13,9 +14,11 @@ builder.Services.AddControllers(options =>
     options.UseNamespaceRouteToken();
 });
 
-builder.Services.AddMediatR(cfg => {
-    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-});
+builder.Services.AddCustomMediatR(
+    typeof(CustomerRoot).Assembly
+);
+
+builder.Services.AddCustomerModules(builder.Configuration);
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

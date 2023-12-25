@@ -1,16 +1,24 @@
-﻿using MediatR;
+﻿using BuildingBlocks.IdsGenerator;
+using Customers.Features.Models;
+using MediatR;
 
 namespace Customers.Features.CreatingCustomer;
 
-public record CreateCustomerCommand : IRequest<string>
+public record CreateCustomerCommand : IRequest<long>
 {
+    public long Id { get; set; } = SnowFlakIdGenerator.NewId();
+
     public string Name { get; set; }
 }
 
-public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, string>
+public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, long>
 {
-    public Task<string> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var customer = new Customer(request.Id, request.Name);
+
+        await Task.Delay(25);
+
+        return customer.Id;
     }
 }
