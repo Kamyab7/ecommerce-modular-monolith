@@ -1,8 +1,6 @@
-using System.Linq.Expressions;
-using BuildingBlocks.Domain.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +15,7 @@ public static class Extensions
         where TContext : DbContext, IDbContext
     {
 
-        services.AddDbContext<TContext>(options =>
+        services.AddDbContext<TContext>((sp, options) =>
         {
             options.UseSqlServer(configuration.GetConnectionString(connectionName),
                 dbOptions =>
@@ -26,21 +24,23 @@ public static class Extensions
                     //ref: https://learn.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
                     dbOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(1), null);
                 });
+
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
         });
 
 
         services.AddScoped<IDbContext>(provider => provider.GetService<TContext>());
-        
+
         return services;
     }
-    
-    
+
+
     public static IApplicationBuilder UseMigration<TContext>(this IApplicationBuilder app)
         where TContext : DbContext, IDbContext
     {
-         MigrateDatabaseAsync<TContext>(app.ApplicationServices).GetAwaiter().GetResult();
-         SeedDataAsync<TContext>(app.ApplicationServices).GetAwaiter().GetResult();
-        
+        MigrateDatabaseAsync<TContext>(app.ApplicationServices).GetAwaiter().GetResult();
+        SeedDataAsync<TContext>(app.ApplicationServices).GetAwaiter().GetResult();
+
         return app;
     }
 
@@ -63,23 +63,5 @@ public static class Extensions
         //    await seeder.SeedAllAsync<TContext>();
         //}
     }
-    
-    
-    // ref: https://github.com/pdevito3/MessageBusTestingInMemHarness/blob/main/RecipeManagement/src/RecipeManagement/Databases/RecipesDbContext.cs
-    public static void FilterSoftDeletedProperties(this ModelBuilder modelBuilder)
-    {
-        Expression<Func<IAggregate, bool>> filterExpr = e => !e.IsDeleted;
-        foreach (var mutableEntityType in modelBuilder.Model.GetEntityTypes()
-                     .Where(m => m.ClrType.IsAssignableTo(typeof(IEntity))))
-        {
-            // modify expression to handle correct child type
-            var parameter = Expression.Parameter(mutableEntityType.ClrType);
-            var body = ReplacingExpressionVisitor
-                .Replace(filterExpr.Parameters.First(), parameter, filterExpr.Body);
-            var lambdaExpression = Expression.Lambda(body, parameter);
 
-            // set filter
-            mutableEntityType.SetQueryFilter(lambdaExpression);
-        }
-    }
 }

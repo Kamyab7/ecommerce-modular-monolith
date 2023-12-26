@@ -1,19 +1,20 @@
-﻿using BuildingBlocks.Domain.Model;
+﻿using BuildingBlocks.Domain.Event;
+using BuildingBlocks.IdsGenerator;
 using Customers.Features.Events;
 
 namespace Customers.Models;
 
-public class Customer : Aggregate<long>
+public class Customer : BaseEntity
 {
     public string Name { get; private set; }
 
-    public Customer(long id, string name)
+    public Customer(string name)
     {
         Name = name;
 
-        Id = id;
+        Id = SnowFlakIdGenerator.NewId();
 
-        var @event = new CustomerCreatedDomainEvent(Id, Name);
+        var @event = new CustomerCreatedEvent(this);
 
         AddDomainEvent(@event);
     }

@@ -14,6 +14,8 @@ public static class CustomerModule
 
         services.AddCustomDbContext<CustomerDbContext>(nameof(Customers), configuration);
 
+
+
         return services;
     }
 

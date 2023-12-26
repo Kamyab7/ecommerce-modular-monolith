@@ -1,14 +1,10 @@
-﻿using BuildingBlocks.IdsGenerator;
-using Customers.Data;
+﻿using Customers.Data;
 using Customers.Models;
 using MediatR;
 
 namespace Customers.Features.CreatingCustomer;
 
-public record CreateCustomerCommand(string Name) : IRequest<long>
-{
-    public long Id { get; set; } = SnowFlakIdGenerator.NewId();
-}
+public record CreateCustomerCommand(string Name) : IRequest<long>;
 
 public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, long>
 {
@@ -21,7 +17,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
 
     public async Task<long> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
-        var customer = new Customer(request.Id, request.Name);
+        var customer = new Customer(request.Name);
 
         _context.Customers.Add(customer);
 

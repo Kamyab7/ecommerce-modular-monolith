@@ -3,6 +3,8 @@ using BuildingBlocks.MediatR;
 using Customers;
 using Figgle;
 using Microsoft.AspNetCore.Mvc;
+using BuildingBlocks.EfCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 var builder = WebApplication.CreateBuilder(args);
 
 var appOptions = builder.Configuration.GetSection("AppOptions").Get<AppOptions>();
@@ -19,6 +21,7 @@ builder.Services.AddCustomMediatR(
 );
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomerModules(builder.Configuration);
+builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
