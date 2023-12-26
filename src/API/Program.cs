@@ -22,7 +22,7 @@ builder.Services.AddCustomMediatR(
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomerModules(builder.Configuration);
 builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
-
+builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen(c =>
@@ -33,7 +33,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressInferBindingSourcesForParameters = true;
 });
-
+builder.Services.AddSingleton(TimeProvider.System);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

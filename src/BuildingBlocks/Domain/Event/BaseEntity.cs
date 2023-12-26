@@ -8,6 +8,8 @@ public abstract class BaseEntity
     // Using non-generic integer types for simplicity
     public long Id { get; set; }
 
+    public int Version { get; set; } = -1;
+
     private readonly List<BaseEvent> _domainEvents = new();
 
     [NotMapped]

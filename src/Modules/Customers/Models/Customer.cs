@@ -4,7 +4,7 @@ using Customers.Features.Events;
 
 namespace Customers.Models;
 
-public class Customer : BaseEntity
+public class Customer : BaseAuditableEntity
 {
     public string Name { get; private set; }
 
