@@ -1,7 +1,7 @@
 ﻿using BuildingBlocks.Domain.Model;
 using Customers.Features.Events;
 
-namespace Customers.Features.Models;
+namespace Customers.Models;
 
 public class Customer : Aggregate<long>
 {
@@ -15,6 +15,6 @@ public class Customer : Aggregate<long>
 
         var @event = new CustomerCreatedDomainEvent(Id, Name);
 
-        this.AddDomainEvent(@event);
+        AddDomainEvent(@event);
     }
 }

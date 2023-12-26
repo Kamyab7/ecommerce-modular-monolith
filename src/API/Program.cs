@@ -17,7 +17,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddCustomMediatR(
     typeof(CustomerRoot).Assembly
 );
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomerModules(builder.Configuration);
 
 

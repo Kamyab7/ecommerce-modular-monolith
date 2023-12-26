@@ -16,7 +16,7 @@ public class CreateCustomerEndpoint : EndpointBaseAsync
     }
 
     [HttpPost("Create")]
-    public override async Task<ActionResult<long>> HandleAsync(CreateCustomerCommand request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<long>> HandleAsync([FromBody] CreateCustomerCommand request, CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(request);
     }
